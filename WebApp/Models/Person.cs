@@ -8,7 +8,7 @@ namespace WebApp.Models
 {
     public class Person
     {
-        public int Id { get; set; }
+        public int PersonId { get; set; }
         [Required]
         public string Name { get; set; }
         [Required]

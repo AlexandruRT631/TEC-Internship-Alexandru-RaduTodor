@@ -1,9 +1,11 @@
 ﻿using Internship.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Internship.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class DepartmentsController : ControllerBase
@@ -55,6 +57,20 @@ namespace Internship.Controllers
             }
             else
                 return BadRequest();
+        }
+        [HttpDelete("{Id}")]
+        public IActionResult Delete(int Id)
+        {
+            var db = new APIDbContext();
+            Department department = db.Departments.Find(Id);
+            if (department == null)
+                return NotFound();
+            else
+            {
+                db.Departments.Remove(department);
+                db.SaveChanges();
+                return NoContent();
+            }
         }
     }
 }

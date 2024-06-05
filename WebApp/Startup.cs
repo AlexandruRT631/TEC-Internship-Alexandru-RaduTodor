@@ -26,7 +26,8 @@ namespace WebApp
 
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddSession();
+            services.AddDistributedMemoryCache();
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
@@ -50,6 +51,7 @@ namespace WebApp
 
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {

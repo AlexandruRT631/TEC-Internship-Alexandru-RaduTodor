@@ -1,11 +1,13 @@
 ﻿using Internship.Model;
 using Internship.ObjectModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Data.Entity;
 
 namespace Internship.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class PersonsController : ControllerBase
@@ -17,9 +19,10 @@ namespace Internship.Controllers
             var list = db.Persons.Include(x => x.Salary).Include(x => x.Position)
                    .Select(x => new PersonInformation()
                    {
-                       Id = x.Id,
+                       PersonId = x.PersonId,
                        Name = x.Name,
                        PositionName = x.Position.Name,
+                       DepartmentName = x.Position.Department.DepartmentName,
                        Salary = x.Salary.Amount,
                    }).ToList();
             return Ok(list);
@@ -29,7 +32,7 @@ namespace Internship.Controllers
         public IActionResult Get(int Id)
         {
             var db = new APIDbContext();
-            Person person = db.Persons.FirstOrDefault(x => x.Id == Id);
+            Person person = db.Persons.FirstOrDefault(x => x.PersonId == Id);
             if (person == null)
                 return NotFound();
             else
@@ -56,7 +59,7 @@ namespace Internship.Controllers
             if (ModelState.IsValid)
             {
                 var db = new APIDbContext();
-                Person updateperson = db.Persons.Find(person.Id);
+                Person updateperson = db.Persons.Find(person.PersonId);
                 updateperson.Address = person.Address;
                 updateperson.Age = person.Age;
                 updateperson.Email = person.Email;
@@ -69,6 +72,20 @@ namespace Internship.Controllers
             }
             else
                 return BadRequest();
+        }
+        [HttpDelete("{Id}")]
+        public IActionResult Delete(int Id)
+        {
+            var db = new APIDbContext();
+            Person person = db.Persons.Find(Id);
+            if (person == null)
+                return NotFound();
+            else
+            {
+                db.Persons.Remove(person);
+                db.SaveChanges();
+                return NoContent();
+            }
         }
     }
 }

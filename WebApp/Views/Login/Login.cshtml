@@ -1,0 +1,33 @@
+﻿@{
+    ViewData["Title"] = "Login";
+}
+@addTagHelper *,Microfost.AspNetCore.Mvc.TagHelpers
+@addTagHelper *,AuthoringTagHelpers
+
+@model Admin
+
+<h1>Login</h1>
+
+<a style="color:white" class="btn btn-primary" asp-action="Register">Register</a>
+<form method="post" asp-action="Login">
+    <div class="form-row">
+        <input asp-for="Id" hidden value="0">
+        <div class="col-md-4 mb-3">
+
+            <label> Username</label>
+            <input asp-for="UserName" class="form-control" />
+
+        </div>
+        <div class="col-md-4 mb-3">
+
+            <label> Password</label>
+            <input asp-for="Password" class="form-control" />
+
+        </div>
+        <div asp-validation-summary="ModelOnly">
+        </div>
+
+    </div>
+    <button type="submit" class="btn btn-primary">Login</button>
+</form>
+

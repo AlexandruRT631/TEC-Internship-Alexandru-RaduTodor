@@ -6,7 +6,7 @@ namespace Internship.Model
     public class Person
     {
         [Key]
-        public int Id { get; set; }
+        public int PersonId { get; set; }
         [Required]
         public string Name  { get; set; }
         [Required]
@@ -19,10 +19,9 @@ namespace Internship.Model
         public string Address  { get; set; }
         [ForeignKey("Position")]
         public int PositionId { get; set; }
-        public Position Position { get; set; }
+        public Position? Position { get; set; }
         [ForeignKey("Salary")]
         public int SalaryId { get; set; }
-        public Salary Salary { get; set; }
-
+        public Salary? Salary { get; set; }
     }
 }

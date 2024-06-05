@@ -16,19 +16,25 @@ namespace WebApp.Controllers
     {
         //HINT task 8 start
 
-/*        private readonly IConfiguration _config;
+        private readonly IConfiguration _config;
         private readonly string _api;
         public PersonController(IConfiguration config)
         {
             _config = config;
-            _api = _config.GetValue<string>("");
-        }*/
+            _api = _config.GetValue<string>("ApiSettings:ApiUrl") + "persons/";
+        }
 
         //HINT task 8 end
         public async Task<IActionResult> Index()
         {
             HttpClient client = new HttpClient();
-            HttpResponseMessage message = await client.GetAsync("http://localhost:5229/api/persons");
+            var token = HttpContext.Session.GetString("Token");
+            if (token == null)
+            {
+                return RedirectToAction("Login", "Login");
+            }
+            client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            HttpResponseMessage message = await client.GetAsync(_api);
             if(message.IsSuccessStatusCode)
             {
                 var jstring = await message.Content.ReadAsStringAsync();
@@ -49,9 +55,15 @@ namespace WebApp.Controllers
             if(ModelState.IsValid)
             {
                 HttpClient client = new HttpClient();
+                var token = HttpContext.Session.GetString("Token");
+                if (token == null)
+                {
+                    return RedirectToAction("Login", "Login");
+                }
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
                 var jsonPerson = JsonConvert.SerializeObject(person);
                 StringContent content = new StringContent(jsonPerson,Encoding.UTF8,"application/json");
-                HttpResponseMessage message = await client.PostAsync("http://localhost:5229/api/persons", content);
+                HttpResponseMessage message = await client.PostAsync(_api, content);
                 if(message.IsSuccessStatusCode)
                 {
                     return RedirectToAction("Index");
@@ -72,7 +84,13 @@ namespace WebApp.Controllers
         public async Task<IActionResult> Update(int Id)
         {
             HttpClient client = new HttpClient();
-            HttpResponseMessage message = await client.GetAsync("http://localhost:5229/api/persons/" + Id);
+            var token = HttpContext.Session.GetString("Token");
+            if (token == null)
+            {
+                return RedirectToAction("Login", "Login");
+            }
+            client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            HttpResponseMessage message = await client.GetAsync(_api + Id);
             if (message.IsSuccessStatusCode)
             {
                 var jstring = await message.Content.ReadAsStringAsync();
@@ -88,9 +106,15 @@ namespace WebApp.Controllers
             if (ModelState.IsValid)
             {
                 HttpClient client = new HttpClient();
+                var token = HttpContext.Session.GetString("Token");
+                if (token == null)
+                {
+                    return RedirectToAction("Login", "Login");
+                }
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
                 var jsonperson = JsonConvert.SerializeObject(person);
                 StringContent content = new StringContent(jsonperson, Encoding.UTF8, "application/json");
-                HttpResponseMessage message = await client.PutAsync("http://localhost:5229/api/persons", content);
+                HttpResponseMessage message = await client.PutAsync(_api, content);
                 if(message.IsSuccessStatusCode)
                 {
                     return RedirectToAction("Index");
@@ -103,7 +127,27 @@ namespace WebApp.Controllers
             else
                 return View(person);
         }
-     
+        [HttpPost]
+        public async Task<IActionResult> Delete(int Id)
+        {
+            HttpClient client = new HttpClient();
+            var token = HttpContext.Session.GetString("Token");
+            if (token == null)
+            {
+                return RedirectToAction("Login", "Login");
+            }
+            client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+            HttpResponseMessage message = await client.DeleteAsync(_api + Id);
+            if (message.IsSuccessStatusCode)
+            {
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                ModelState.AddModelError("", "There is an API Error");
+                return RedirectToAction("Index");
+            }
+        }
 
     }
 }

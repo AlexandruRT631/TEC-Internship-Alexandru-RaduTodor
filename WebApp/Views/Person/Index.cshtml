@@ -29,8 +29,10 @@
                    <td>@item.Salary</td>
                    
                    <td>
-                       <a style="color:white" class="btn btn-success" asp-action="Update" asp-route-id="@item.Id">Update</a>
-                       <a style="color:white" class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                       <a style="color:white" class="btn btn-success" asp-action="Update" asp-route-id="@item.PersonId">Update</a>
+                       <form asp-action="Delete" asp-route-id="@item.PersonId" method="post" class="d-inline">
+                           <button type="submit" class="btn btn-danger" style="color:white">Delete</button>
+                       </form>
                    </td>
                </tr>
            }
